@@ -10,8 +10,7 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm run test",
-    "icons": "node scripts/gen-icons.mjs",
-    "deploy": "bash scripts/publish.sh"
+    "icons": "node scripts/gen-icons.mjs"
   },
   "devDependencies": {
     "typescript": "~5.9",

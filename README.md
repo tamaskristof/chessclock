@@ -25,7 +25,7 @@ A chess clock with no electronics on the table. A wooden board rests on a wedge 
 
 ## Deployment
 
-- Run `npm run deploy`. It builds the app and force-pushes `dist/` to the `gh-pages` branch.
-- In the GitHub repo under Settings → Pages, set the source to branch `gh-pages`, folder `/ (root)`.
+- Every push to `main` runs `.github/workflows/deploy.yml`: it installs dependencies, runs `npm run check`, builds, and deploys `dist/` to GitHub Pages. It can also be started by hand from the Actions tab.
+- The site is served at https://tamaskristof.github.io/chessclock/.
 - The app is built with a relative base (`./`), so it works under any Pages URL path.
 - Install on the phone via "Add to Home screen".
