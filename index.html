@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#111111" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>Camera Chess Clock</title>
+  </head>
+  <body data-screen="start">
+    <video id="video" playsinline muted autoplay></video>
+
+    <section id="screen-start" class="screen">
+      <h1>Camera Chess Clock</h1>
+      <p>Place the phone so its back camera sees the wooden board. Keep the phone still during the game.</p>
+      <button id="btn-camera" class="primary">Start camera</button>
+      <p id="start-error" class="error" hidden></p>
+    </section>
+
+    <section id="screen-setup" class="screen" hidden>
+      <div id="roi-layer"></div>
+      <div class="panel setup-panel">
+        <p>1. Drag a box around the board. 2. Press the LEFT side down, tap “Capture left”. 3. Press the RIGHT side down, tap “Capture right”.</p>
+        <div class="row">
+          <button id="btn-cap-left">Capture left</button>
+          <button id="btn-cap-right">Capture right</button>
+          <button id="btn-setup-done" class="primary" disabled>Done</button>
+        </div>
+        <p id="setup-status"></p>
+      </div>
+    </section>
+
+    <section id="screen-game" class="screen" hidden>
+      <div class="clocks">
+        <div id="clock-left" class="clock"><span id="time-left" class="time">5:00</span></div>
+        <div id="clock-right" class="clock"><span id="time-right" class="time">5:00</span></div>
+      </div>
+      <div class="panel game-bar">
+        <span id="board-indicator">Board: ?</span>
+        <select id="tc-preset">
+          <option value="">Custom</option>
+          <option value="1,0">1+0</option>
+          <option value="3,0">3+0</option>
+          <option value="3,2">3+2</option>
+          <option value="5,0">5+0</option>
+          <option value="5,3">5+3</option>
+          <option value="10,0">10+0</option>
+          <option value="10,5">10+5</option>
+          <option value="15,10">15+10</option>
+          <option value="30,0">30+0</option>
+        </select>
+        <label><input id="tc-minutes" type="number" min="1" max="180" step="1" /> min</label>
+        <label>+<input id="tc-increment" type="number" min="0" max="60" step="1" /> s</label>
+        <button id="btn-start" class="primary">Start</button>
+        <button id="btn-pause" hidden>Pause</button>
+        <button id="btn-reset">Reset</button>
+        <button id="btn-recalibrate">Recalibrate</button>
+        <button id="btn-toggle-camera">Hide camera</button>
+      </div>
+    </section>
+
+    <div id="roi-box" hidden></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

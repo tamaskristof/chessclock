@@ -1,0 +1,22 @@
+{
+  "name": "chessclock",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run test",
+    "icons": "node scripts/gen-icons.mjs",
+    "deploy": "bash scripts/publish.sh"
+  },
+  "devDependencies": {
+    "typescript": "~5.9",
+    "vite": "^8.3.8",
+    "vite-plugin-pwa": "^1.3.0",
+    "vitest": "^5.1.0"
+  }
+}
