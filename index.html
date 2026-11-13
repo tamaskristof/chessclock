@@ -31,8 +31,13 @@
             <div class="label" id="tc-label">Time control</div>
             <div id="tc-chips" class="chips" role="group" aria-labelledby="tc-label"></div>
             <div id="tc-custom" class="custom-tc" hidden>
-              <label class="inline-field"><input id="tc-minutes" class="input num" type="number" inputmode="numeric" min="1" max="180" step="1" /> min</label>
-              <label class="inline-field">+ <input id="tc-increment" class="input num" type="number" inputmode="numeric" min="0" max="60" step="1" /> s</label>
+              <button id="tc-back" type="button" class="btn back">
+                <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 L6.5 10 L12.5 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Presets
+              </button>
+              <div class="custom-inputs">
+                <label class="inline-field"><input id="tc-minutes" class="input num" type="number" inputmode="numeric" min="1" max="180" step="1" /> min</label>
+                <label class="inline-field">+ <input id="tc-increment" class="input num" type="number" inputmode="numeric" min="0" max="60" step="1" /> s</label>
+              </div>
             </div>
           </div>
           <p id="tc-summary" class="small muted"></p>

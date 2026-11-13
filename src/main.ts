@@ -34,6 +34,7 @@ const startError = $("start-error");
 
 const tcChips = $("tc-chips");
 const tcCustom = $("tc-custom");
+const tcBack = $<HTMLButtonElement>("tc-back");
 const tcMinutes = $<HTMLInputElement>("tc-minutes");
 const tcIncrement = $<HTMLInputElement>("tc-increment");
 const tcSummary = $("tc-summary");
@@ -85,7 +86,7 @@ let lastDistances = { dLeft: 0, dRight: 0 };
 let sampleTimer: number | null = null;
 let rafId: number | null = null;
 let cameraWanted = false;
-let customOpen = !PRESETS.some(([m, i]) => settings.timeControl.baseMs === m * 60_000 && settings.timeControl.incrementMs === i * 1000);
+let customOpen = false;
 let calStep = 0;
 let calReturn: Screen = "home";
 let calError: string | null = null;
@@ -309,6 +310,9 @@ function render(now: number = performance.now()): void {
 }
 
 // ---------- rendering: home ----------
+function isPreset(tc: { baseMs: number; incrementMs: number }): boolean {
+  return PRESETS.some(([m, i]) => tc.baseMs === m * 60_000 && tc.incrementMs === i * 1000);
+}
 function renderTimeControl(): void {
   const tc = settings.timeControl;
   const children: HTMLElement[] = PRESETS.map(([m, i]) => {
@@ -316,24 +320,35 @@ function renderTimeControl(): void {
     b.type = "button";
     b.className = "chip";
     b.textContent = `${m}+${i}`;
-    const on = !customOpen && tc.baseMs === m * 60_000 && tc.incrementMs === i * 1000;
-    b.setAttribute("aria-pressed", String(on));
-    b.addEventListener("click", () => {
-      customOpen = false;
-      applyTc(m, i);
-    });
+    b.setAttribute("aria-pressed", String(tc.baseMs === m * 60_000 && tc.incrementMs === i * 1000));
+    b.addEventListener("click", () => applyTc(m, i));
     return b;
   });
   const custom = document.createElement("button");
   custom.type = "button";
-  custom.className = "chip text";
-  custom.textContent = "Custom";
-  custom.setAttribute("aria-pressed", String(customOpen));
+  const customActive = !isPreset(tc);
+  if (customActive) {
+    const label = tcLabel(tc);
+    custom.className = "chip custom-val";
+    custom.setAttribute("aria-label", `Custom, ${label}`);
+    const cap = document.createElement("span");
+    cap.className = "cap";
+    cap.textContent = "CUSTOM";
+    const val = document.createElement("span");
+    val.className = "val";
+    val.textContent = label;
+    custom.append(cap, val);
+  } else {
+    custom.className = "chip text";
+    custom.textContent = "Custom";
+  }
+  custom.setAttribute("aria-pressed", String(customActive));
   custom.addEventListener("click", () => {
-    customOpen = !customOpen;
+    customOpen = true;
     renderTimeControl();
   });
   tcChips.replaceChildren(...children, custom);
+  tcChips.hidden = customOpen;
   tcCustom.hidden = !customOpen;
   if (document.activeElement !== tcMinutes) tcMinutes.value = String(tc.baseMs / 60_000);
   if (document.activeElement !== tcIncrement) tcIncrement.value = String(tc.incrementMs / 1000);
@@ -379,6 +394,10 @@ function applyTc(minutes: number, incSec: number): void {
   }
   renderTimeControl();
 }
+tcBack.addEventListener("click", () => {
+  customOpen = false;
+  renderTimeControl();
+});
 tcMinutes.addEventListener("input", () => applyTc(Number(tcMinutes.value), Number(tcIncrement.value)));
 tcIncrement.addEventListener("input", () => applyTc(Number(tcMinutes.value), Number(tcIncrement.value)));
 tcMinutes.addEventListener("change", renderTimeControl);
