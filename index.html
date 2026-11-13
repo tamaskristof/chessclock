@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-    <meta name="theme-color" content="#111111" />
+    <meta name="theme-color" content="#0e0f0d" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black" />
@@ -14,56 +14,176 @@
   <body data-screen="start">
     <video id="video" playsinline muted autoplay></video>
 
-    <section id="screen-start" class="screen">
-      <h1>Camera Chess Clock</h1>
-      <p>Place the phone so its back camera sees the wooden board. Keep the phone still during the game.</p>
-      <button id="btn-camera" class="primary">Start camera</button>
-      <p id="start-error" class="error" hidden></p>
+    <!-- Start: camera permission -->
+    <section id="screen-start" class="screen screen-center">
+      <h1 class="display-title">Camera Chess Clock</h1>
+      <p class="body">Stand the phone at the end of the board so its back camera sees the wooden plank. Keep it still during the game.</p>
+      <button id="btn-camera" class="btn primary">Start camera</button>
+      <p id="start-error" class="error" role="alert" hidden></p>
     </section>
 
-    <section id="screen-setup" class="screen" hidden>
-      <div id="roi-layer"></div>
-      <div class="panel setup-panel">
-        <p>1. Drag a box around the board. 2. Press the LEFT side down, tap “Capture left”. 3. Press the RIGHT side down, tap “Capture right”.</p>
-        <div class="row">
-          <button id="btn-cap-left">Capture left</button>
-          <button id="btn-cap-right">Capture right</button>
-          <button id="btn-setup-done" class="primary" disabled>Done</button>
+    <!-- Home: new game -->
+    <section id="screen-home" class="screen screen-scroll" hidden>
+      <div class="home">
+        <div class="home-main">
+          <h1 class="title">New game</h1>
+          <div class="field">
+            <div class="label" id="tc-label">Time control</div>
+            <div id="tc-chips" class="chips" role="group" aria-labelledby="tc-label"></div>
+            <div id="tc-custom" class="custom-tc" hidden>
+              <label class="inline-field"><input id="tc-minutes" class="input num" type="number" inputmode="numeric" min="1" max="180" step="1" /> min</label>
+              <label class="inline-field">+ <input id="tc-increment" class="input num" type="number" inputmode="numeric" min="0" max="60" step="1" /> s</label>
+            </div>
+          </div>
+          <p id="tc-summary" class="small muted"></p>
+          <div class="grow"></div>
+          <div class="row">
+            <span id="cal-pill" class="pill"><span class="dot"></span><span id="cal-pill-text">Board calibrated</span></span>
+            <button id="btn-calibrate" class="btn">Recalibrate</button>
+          </div>
         </div>
-        <p id="setup-status"></p>
+
+        <div class="home-side">
+          <div class="label">Players · optional</div>
+          <div class="player-row" data-side="left">
+            <span class="side-tag">LEFT</span>
+            <input id="name-left" class="input" type="text" placeholder="Name" maxlength="60" autocomplete="off" aria-label="Left player name" />
+            <input id="rating-left" class="input num rating" type="text" inputmode="numeric" placeholder="Rating" maxlength="4" aria-label="Left player rating" />
+            <button class="btn icon find" data-side="left" aria-label="Find left player on chess.com">
+              <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M13 13 L17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div id="source-left" class="source" hidden></div>
+          <div class="player-row" data-side="right">
+            <span class="side-tag">RIGHT</span>
+            <input id="name-right" class="input" type="text" placeholder="Name" maxlength="60" autocomplete="off" aria-label="Right player name" />
+            <input id="rating-right" class="input num rating" type="text" inputmode="numeric" placeholder="Rating" maxlength="4" aria-label="Right player rating" />
+            <button class="btn icon find" data-side="right" aria-label="Find right player on chess.com">
+              <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M13 13 L17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <div id="source-right" class="source" hidden></div>
+          <div class="grow"></div>
+          <div class="row board-row">
+            <span id="home-board-pill" class="pill"><span class="dot off"></span><span id="home-board-text">No board</span></span>
+          </div>
+          <p class="small muted">The player who moves second presses their side down, then Start.</p>
+          <button id="btn-start" class="btn primary big" disabled>Start game</button>
+        </div>
       </div>
     </section>
 
+    <!-- Search: chess.com lookup -->
+    <section id="screen-search" class="screen screen-scroll" hidden>
+      <div class="home search">
+        <div class="home-main">
+          <div class="head-row">
+            <button id="search-back" class="btn icon" aria-label="Back to new game">
+              <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M11 3 L5 9 L11 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="head-text">
+              <h1 class="title">Find on chess.com</h1>
+              <span id="search-side" class="label">Left player</span>
+            </div>
+          </div>
+          <form id="search-form" class="search-form" autocomplete="off">
+            <input id="search-input" class="input big" type="text" placeholder="chess.com username" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="25" aria-label="chess.com username" />
+            <button id="search-go" class="btn big" type="submit">Look up</button>
+          </form>
+          <p id="search-msg" class="body small" role="status"></p>
+          <div id="recent" class="field" hidden>
+            <div class="label">Recent</div>
+            <div id="recent-chips" class="chips-wrap"></div>
+          </div>
+        </div>
+        <div class="home-side">
+          <div id="search-card" class="card" hidden>
+            <div class="card-head">
+              <div id="card-avatar" class="avatar" aria-hidden="true"></div>
+              <div class="card-who">
+                <span id="card-name" class="card-name"></span>
+                <span id="card-sub" class="small muted"></span>
+              </div>
+            </div>
+            <div id="card-cats" class="cats" role="group" aria-label="Rating category"></div>
+            <p id="card-note" class="small muted"></p>
+            <div class="grow"></div>
+            <button id="card-use" class="btn primary big"></button>
+          </div>
+          <div id="search-empty" class="card empty">
+            <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><circle cx="17" cy="17" r="11" fill="none" stroke="currentColor" stroke-width="3"/><path d="M25.5 25.5 L34 34" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+            <div id="empty-title" class="empty-title">Look up a player</div>
+            <div id="empty-text" class="small muted">Type the exact chess.com username. Needs an internet connection.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Calibrate: four-step wizard over the camera -->
+    <section id="screen-calibrate" class="screen" hidden>
+      <div id="roi-layer"></div>
+      <div id="roi-box" hidden>
+        <span class="handle" data-corner="nw"></span><span class="handle" data-corner="ne"></span>
+        <span class="handle" data-corner="sw"></span><span class="handle" data-corner="se"></span>
+      </div>
+      <span class="cam-tag">LIVE CAMERA</span>
+      <aside class="cal-panel">
+        <ol class="steps" aria-label="Calibration steps">
+          <li data-step="0"><i></i><span>Frame</span></li>
+          <li data-step="1"><i></i><span>Left</span></li>
+          <li data-step="2"><i></i><span>Right</span></li>
+          <li data-step="3"><i></i><span>Test</span></li>
+        </ol>
+        <h1 id="cal-title" class="title"></h1>
+        <p id="cal-text" class="body"></p>
+        <div id="cal-extra"></div>
+        <div class="grow"></div>
+        <div class="row">
+          <button id="cal-back" class="btn">Back</button>
+          <button id="cal-next" class="btn primary grow-btn">Next</button>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Game: two clocks -->
     <section id="screen-game" class="screen" hidden>
       <div class="clocks">
-        <div id="clock-left" class="clock"><span id="time-left" class="time">5:00</span></div>
-        <div id="clock-right" class="clock"><span id="time-right" class="time">5:00</span></div>
+        <div id="clock-left" class="clock" data-side="left">
+          <div id="who-left" class="who" hidden></div>
+          <div class="digits"><span id="time-left" class="main"></span><span id="frac-left" class="frac"></span></div>
+        </div>
+        <div id="clock-right" class="clock" data-side="right">
+          <div id="who-right" class="who" hidden></div>
+          <div class="digits"><span id="time-right" class="main"></span><span id="frac-right" class="frac"></span></div>
+        </div>
       </div>
-      <div class="panel game-bar">
-        <span id="board-indicator">Board: ?</span>
-        <select id="tc-preset">
-          <option value="">Custom</option>
-          <option value="1,0">1+0</option>
-          <option value="3,0">3+0</option>
-          <option value="3,2">3+2</option>
-          <option value="5,0">5+0</option>
-          <option value="5,3">5+3</option>
-          <option value="10,0">10+0</option>
-          <option value="10,5">10+5</option>
-          <option value="15,10">15+10</option>
-          <option value="30,0">30+0</option>
-        </select>
-        <label><input id="tc-minutes" type="number" min="1" max="180" step="1" /> min</label>
-        <label>+<input id="tc-increment" type="number" min="0" max="60" step="1" /> s</label>
-        <button id="btn-start" class="primary">Start</button>
-        <button id="btn-pause" hidden>Pause</button>
-        <button id="btn-reset">Reset</button>
-        <button id="btn-recalibrate">Recalibrate</button>
-        <button id="btn-toggle-camera">Hide camera</button>
+      <span id="game-pill" class="pill floating"><span class="dot off"></span><span id="game-pill-text">No board</span></span>
+      <button id="btn-pause" class="round-btn" aria-label="Pause">
+        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><rect x="4" y="3" width="4" height="14" rx="1" fill="currentColor"/><rect x="12" y="3" width="4" height="14" rx="1" fill="currentColor"/></svg>
+      </button>
+
+      <div id="sheet-pause" class="sheet" role="dialog" aria-label="Paused" hidden>
+        <div class="sheet-head">
+          <h2 class="title">Paused</h2>
+          <span id="pause-sub" class="body muted"></span>
+        </div>
+        <div class="sheet-actions">
+          <button id="btn-resume" class="btn primary big">Resume</button>
+          <button id="btn-new" class="btn big">New game</button>
+          <button id="btn-recal" class="btn big">Recalibrate</button>
+        </div>
+      </div>
+
+      <div id="result" class="result" role="alertdialog" aria-label="Game over" hidden>
+        <div class="result-text">
+          <div id="result-title" class="result-title"></div>
+          <div id="result-sub" class="small muted"></div>
+        </div>
+        <button id="result-new" class="btn big">New game</button>
+        <button id="result-rematch" class="btn primary big">Rematch</button>
       </div>
     </section>
 
-    <div id="roi-box" hidden></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

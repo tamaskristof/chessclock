@@ -12,7 +12,7 @@ export interface ClockState {
 }
 export type ClockEvent = { type: "lowTime"; side: Side } | { type: "flag"; side: Side };
 
-export const LOW_TIME_MS = 10_000;
+export const LOW_TIME_MS = 20_000;
 export const SIDES: readonly Side[] = ["left", "right"];
 
 export function other(side: Side): Side { return side === "left" ? "right" : "left"; }
