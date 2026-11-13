@@ -15,6 +15,7 @@ import { initSearch } from "./search";
 import { loadSettings, saveSettings, withRecent, type Settings } from "./storage";
 import { averageFeatures, classify, distance, MIN_REF_SEPARATION, StateDebouncer, type BoardState, type Feature } from "./vision";
 import { acquireWakeLock, releaseWakeLock } from "./wakelock";
+import { enterFullscreen } from "./fullscreen";
 
 const CAPTURE_FRAMES = 5;
 const SAMPLE_MS_RUNNING = 100;
@@ -608,6 +609,7 @@ window.addEventListener("resize", renderRoi);
 btnCamera.addEventListener("click", async () => {
   startError.hidden = true;
   unlockAudio();
+  enterFullscreen(); // before any await, while the tap still counts as a user gesture
   if (!navigator.mediaDevices?.getUserMedia) {
     showStartError("No camera access. Open the app over HTTPS in Chrome or Safari.");
     return;
@@ -627,6 +629,7 @@ btnCamera.addEventListener("click", async () => {
 function startGame(): void {
   if (board === null || !calibrationReady()) return;
   unlockAudio();
+  enterFullscreen(); // in case the player left fullscreen since the camera started
   clock = start(createClock(settings.timeControl), boardToActive(board), performance.now());
   lastText.left = "";
   lastText.right = "";

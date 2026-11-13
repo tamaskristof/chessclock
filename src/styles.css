@@ -131,7 +131,7 @@ body[data-screen="calibrate"] #screen-calibrate { background: transparent; }
 .rating { width: 72px; flex: none; }
 .side-tag { width: 36px; font: 600 15px/1 var(--font-display); color: var(--ink-muted); letter-spacing: 0.04em; }
 .source { margin: -2px 0 0 44px; font: 500 13px/18px var(--font-ui); color: var(--ink-muted); overflow-wrap: anywhere; }
-.board-row { margin-top: var(--space-1); }
+.start-row { gap: var(--space-2); }
 .head-row { display: flex; align-items: center; gap: 12px; }
 .head-text { display: flex; flex-direction: column; }
 .search-form { display: flex; gap: var(--space-2); }
@@ -245,6 +245,20 @@ body[data-cal-step="0"] .handle { display: block; }
 @media (prefers-reduced-motion: reduce) {
   .sheet, .result { animation: none; }
   .clock.running { transition: none; }
+}
+
+/* ---------- short landscape phones (e.g. 800x360) ---------- */
+/* Tighter spacing and type so no screen has to scroll; touch targets stay at 48px. */
+@media (max-height: 440px) and (min-aspect-ratio: 1/1) {
+  .screen-scroll { padding-block: max(8px, var(--safe-t)) max(8px, var(--safe-b)); }
+  .title { font-size: 22px; line-height: 28px; }
+  .home-main { gap: var(--space-2); }
+  .home-side { padding-top: 36px; gap: 6px; } /* stays level with the time-control label under the smaller title */
+  .search .home-main { gap: 10px; }
+  .btn.big, .input.big { min-height: var(--touch-min); }
+  .card { min-height: 0; padding: 14px; gap: 10px; }
+  .cat { height: 52px; }
+  .cal-panel { gap: 10px; padding-top: max(12px, var(--safe-t)); padding-bottom: max(12px, var(--safe-b)); }
 }
 
 /* ---------- portrait phones ---------- */
